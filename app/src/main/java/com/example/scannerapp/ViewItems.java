@@ -2,11 +2,14 @@ package com.example.scannerapp;
 
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -74,8 +77,12 @@ public class ViewItems extends AppCompatActivity implements View.OnClickListener
         @Override
         public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
 
-            itemModalArrayList.remove(viewHolder.getAdapterPosition());
-            itemsRVAdapter.notifyDataSetChanged();
+            ItemModal x = dbHandler.readItem(viewHolder.getAdapterPosition());
+            dbHandler.deleteItem(x.getitemName());
+            Toast.makeText(ViewItems.this,"Item " + x.getitemName() + "was deleted", Toast.LENGTH_SHORT).show();
+            itemsRVAdapter.notifyItemRemoved(x.getId());
+            Intent i = new Intent(ViewItems.this,ViewItems.class);
+            startActivity(i);
 
 
 
