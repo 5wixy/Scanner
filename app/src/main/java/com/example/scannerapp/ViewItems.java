@@ -1,35 +1,43 @@
 package com.example.scannerapp;
 
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QuerySnapshot;
 
 
 import java.util.ArrayList;
 
 public class ViewItems extends AppCompatActivity implements View.OnClickListener {
 
+
+
+    FirebaseFirestore db;
     // creating variables for our array list,
     // dbhandler, adapter and recycler view.
     private ArrayList<ItemModal> itemModalArrayList;
-    private DBHandler dbHandler;
-    public ItemRVAdapter itemsRVAdapter;
-    ItemModal delItem;
     private RecyclerView itemsRV;
-    public FloatingActionButton btnMenu;
-    TextView tvScanContent, tvScanFormat,idtvItemName;
+    MyAdapter  myAdapter;
 
+    TextView tvScanContent, tvScanFormat, idtvItemName,idtvItemPrice,idtvItemCode;
 
 
     @Override
@@ -38,62 +46,61 @@ public class ViewItems extends AppCompatActivity implements View.OnClickListener
         setContentView(R.layout.activity_view_item);
 
         // initializing our all variables.
-        itemModalArrayList = new ArrayList<>();
-        dbHandler = new DBHandler(ViewItems.this);
-        MainActivity scanAdd = new MainActivity();
+        itemModalArrayList = new ArrayList<ItemModal>();
         tvScanContent = findViewById(R.id.tvScanContent);
         tvScanFormat = findViewById(R.id.tvScanFormat);
-        idtvItemName = findViewById(R.id.idTVItemName);
-        btnMenu = findViewById(R.id.btnMenu);
-        btnMenu.setOnClickListener(this);
-
-
-        // getting our course array
-        // list from db handler class.
-        itemModalArrayList = dbHandler.readItems();
-
+        idtvItemName = findViewById(R.id.tvItemName);
+        idtvItemPrice = findViewById(R.id.tvItemPrice);
+        idtvItemCode = findViewById(R.id.tvItemCode);
+        db = FirebaseFirestore.getInstance();
         // on below line passing our array lost to our adapter class.
-        itemsRVAdapter = new ItemRVAdapter(itemModalArrayList, ViewItems.this);
         itemsRV = findViewById(R.id.idRVItems);
+        itemsRV.setHasFixedSize(true);
+        itemsRV.setLayoutManager(new LinearLayoutManager(this));
+        myAdapter = new MyAdapter(ViewItems.this,itemModalArrayList);
+        itemsRV.setAdapter(myAdapter);
+        EventChangeListener();
 
-        // setting layout manager for our recycler view.
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(ViewItems.this, RecyclerView.VERTICAL, false);
-        itemsRV.setLayoutManager(linearLayoutManager);
-        new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(itemsRV);
-        // setting our adapter to recycler view.
-        itemsRV.setAdapter(itemsRVAdapter);
 
     }
 
-    ItemTouchHelper.SimpleCallback itemTouchHelperCallback = new ItemTouchHelper.SimpleCallback(0,ItemTouchHelper.RIGHT) {
-        @Override
-        public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
-            return false;
-        }
+    private void EventChangeListener() {
+        db.collection("items").addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                if (error != null){
 
-        @Override
-        public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-//testing
-            ItemModal x = dbHandler.readItem(viewHolder.getAdapterPosition());
-            dbHandler.deleteItem(x.getitemName());
-            Toast.makeText(ViewItems.this,"Item " + x.getitemName() + "was deleted", Toast.LENGTH_SHORT).show();
-            itemsRVAdapter.notifyItemRemoved(x.getId());
-            Intent i = new Intent(ViewItems.this,ViewItems.class);
-            startActivity(i);
+                    Log.e("Firestore error",error.getMessage());
+                    return;
+                }
+                for (DocumentChange dc : value.getDocumentChanges()){
+                    if (dc.getType() == DocumentChange.Type.ADDED){
+                        itemModalArrayList.add(dc.getDocument().toObject(ItemModal.class));
+                    }
+                }
+                myAdapter.notifyDataSetChanged();
 
 
 
-        }
-    };
+            }
+        });
+    }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+    }
 
     @Override
     public void onClick(View view) {
-        dbHandler.getData();
 
     }
-
 }
+
+
+
+
+
 
 
 

@@ -19,7 +19,6 @@ public class ShowDB extends AppCompatActivity implements View.OnClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_db);
-        btnMore = findViewById(R.id.btnMore);
         btnMore.setImageResource(R.drawable.ic_more);
 
 

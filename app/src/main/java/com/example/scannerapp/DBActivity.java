@@ -11,6 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+
 public class DBActivity extends AppCompatActivity{
 
     // creating variables for our edittext, button and dbhandler
@@ -18,7 +19,6 @@ public class DBActivity extends AppCompatActivity{
     TextView tvCode;
     EditText etName;
     EditText etPrice;
-    private DBHandler dbHandler;
     public String itemName,rCode,itemPrice;
     public Intent intent;
 
@@ -40,13 +40,10 @@ public class DBActivity extends AppCompatActivity{
         itemPrice = etPrice.getText().toString();
         // creating a new dbhandler class
         // and passing our context to it.
-        dbHandler = new DBHandler(DBActivity.this);
+
         intent = getIntent();
         rCode = intent.getStringExtra("variable");
         tvCode.setText(rCode);
-
-        //create FirebaseHandler instance
-        FirebaseHandler firebaseHandler = new FirebaseHandler();
 
         // below line is to add on click listener for our add course button.
         addItemBtn.setOnClickListener(new View.OnClickListener() {
@@ -63,18 +60,10 @@ public class DBActivity extends AppCompatActivity{
                     return;
                 }
                 //TODO IF CODE EXISTS RETRUN THIS ITEM EXISTS
-                if (dbHandler.isExist(rCode)){
-                    Toast.makeText(DBActivity.this, "This Item already exists..", Toast.LENGTH_SHORT).show();
-                    return;
-                }
+
 
                 // on below line we are calling a method to add new
                 // course to sqlite data and pass all our values to it.
-                else {
-                    dbHandler.addNewItem(itemName, itemPrice, rCode);
-                    // add item to firestore
-                    firebaseHandler.addItem(new StoreItem(rCode, itemName, itemPrice));
-                }
                     // after adding the data we are displaying a toast message.
                     Toast.makeText(DBActivity.this, "Item has been added.", Toast.LENGTH_SHORT).show();
                     Intent swapAct = new Intent(DBActivity.this,ViewItems.class);

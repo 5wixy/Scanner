@@ -5,9 +5,10 @@ public class ItemModal {
     // variables for our itemname,
     // price,code and id.
     public String itemName;
-    private String itemPrice;
-    private String itemCode;
+    public String itemPrice;
+    public String itemCode;
     private int id;
+    public ItemModal(){}
 
     // creating getter and setter methods
     public String getitemName() {
