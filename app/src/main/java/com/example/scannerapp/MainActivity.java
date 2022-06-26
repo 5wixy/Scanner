@@ -14,9 +14,10 @@ import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
-    Button btnScan, btnDb, btnView;
+    Button btnScan, btnView;
     TextView tvScanContent, tvScanFormat;
     String code;
+    FirebaseHandler firebaseHandler;
 
 
 
@@ -26,13 +27,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
         btnScan=findViewById(R.id.btnScan);
         btnScan.setOnClickListener(this);
-        btnDb = findViewById(R.id.btnDb);
-        btnDb.setOnClickListener(this);
         tvScanContent = findViewById(R.id.tvScanContent);
         tvScanFormat = findViewById(R.id.tvScanFormat);
         btnView = findViewById(R.id.btnView);
         btnView.setOnClickListener(this);
-
+        firebaseHandler = new FirebaseHandler();
     }
 
     public void startScan() {
@@ -53,10 +52,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             integrator.setOrientationLocked(true);
             integrator.initiateScan();
             break;
-            case R.id.btnDb:
-                Intent intent = new Intent(this,ShowDB.class);
-                startActivity(intent);
-                break;
             case R.id.btnView:
                 Intent i = new Intent(this,ViewItems.class);
                 startActivity(i);
@@ -76,10 +71,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             if(result.getContents()==null){
                 Toast.makeText(getBaseContext(),"Cancelled",Toast.LENGTH_LONG).show();
             }
+            if(firebaseHandler.isExist(result.getContents()))
+            {
+                Toast.makeText(getBaseContext(),"Exists",Toast.LENGTH_LONG).show();
+            }
             else{
                 tvScanFormat.setText(result.getFormatName());
                 tvScanContent.setText(result.getContents());
                 code = result.getContents();
+
                 switchAfterScan();
 
             }

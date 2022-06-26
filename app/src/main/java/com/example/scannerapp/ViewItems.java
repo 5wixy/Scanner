@@ -6,13 +6,19 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.motion.widget.OnSwipe;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -29,7 +35,7 @@ import java.util.ArrayList;
 public class ViewItems extends AppCompatActivity implements View.OnClickListener {
 
 
-
+    FirebaseHandler handler;
     FirebaseFirestore db;
     // creating variables for our array list,
     // dbhandler, adapter and recycler view.
@@ -59,13 +65,14 @@ public class ViewItems extends AppCompatActivity implements View.OnClickListener
         itemsRV.setLayoutManager(new LinearLayoutManager(this));
         myAdapter = new MyAdapter(ViewItems.this,itemModalArrayList);
         itemsRV.setAdapter(myAdapter);
+        handler = new FirebaseHandler();
         EventChangeListener();
 
 
     }
 
     private void EventChangeListener() {
-        db.collection("items").addSnapshotListener(new EventListener<QuerySnapshot>() {
+        this.db.collection("items").addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                 if (error != null){
@@ -86,6 +93,8 @@ public class ViewItems extends AppCompatActivity implements View.OnClickListener
         });
     }
 
+
+
     @Override
     protected void onStart() {
         super.onStart();
@@ -94,6 +103,39 @@ public class ViewItems extends AppCompatActivity implements View.OnClickListener
     @Override
     public void onClick(View view) {
 
+    }
+
+
+
+    /** search bar */
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.search,menu);
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        SearchView searchView = (SearchView) searchItem.getActionView();
+        searchView.setImeOptions(EditorInfo.IME_ACTION_DONE);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                myAdapter.getFilter().filter(s);
+                return false;
+            }
+        });
+        return true;
+    }
+
+    // func that on back press takes back to menu and not to add activity
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent intent = new Intent(this,MainActivity.class);
+        startActivity(intent);
     }
 }
 

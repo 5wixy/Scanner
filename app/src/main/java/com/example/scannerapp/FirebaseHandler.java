@@ -16,32 +16,35 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import java.util.HashMap;
-import java.util.Map;
+
 
 public class FirebaseHandler {
+    String itemCode;
+    boolean flag;
 
     FirebaseFirestore db = FirebaseFirestore.getInstance();
+
     public FirebaseHandler() {
         this.db = db;
+
     }
 
-    public void addItem(@NonNull StoreItem item) {
+    public void addItem(@NonNull ItemModal item) {
         /**
-         * Adds StoreItem object to firestore db,
+         * Adds StoreItem object to Firestore db,
          * uses barcode value as db identifier
-         * @param item StoreItem instance.
+         * @param item ItemModal instance.
          */
 
         this.db.collection("items")
                 .document(item.getCode())
                 .set(item)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                Log.d(TAG, "DocumentSnapshot successfully written!");
-            }
-        })
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "DocumentSnapshot successfully written!");
+                    }
+                })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
@@ -49,9 +52,10 @@ public class FirebaseHandler {
                     }
                 });
     }
+
     public void getAllItems() {
         /**
-         * Gets all items from the firestore db
+         * Gets all items from the Firestore db
          */
         this.db.collection("items")
                 .get()
@@ -59,22 +63,21 @@ public class FirebaseHandler {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot documentSnapshot : task.getResult()){
+                            for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
                                 Log.d(TAG, documentSnapshot.getId() + "=> " + documentSnapshot.getData());
                             }
-                        }
-                        else {
+                        } else {
                             Log.w(TAG, "Error getting documents.", task.getException());
                         }
                     }
                 });
     }
+
     public void getItem(String code) {
         /**
-         * Gets the item by code from the firestore db
+         * Gets the item by code from the Firestore db
          * @param code the barcode value of the item
          */
-        // test
         DocumentReference docRef = db.collection("items").document(code);
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -92,6 +95,7 @@ public class FirebaseHandler {
             }
         });
     }
+
     public void deleteItem(String code) {
         db.collection("items")
                 .document(code)
@@ -109,4 +113,36 @@ public class FirebaseHandler {
                     }
                 });
     }
-}
+
+    public boolean isExist(String itemCode) {
+        DocumentReference documentReference = db.collection("items").document();
+        documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if(task.isSuccessful()){
+                    DocumentSnapshot documentSnapshot = task.getResult();
+                    if (documentSnapshot.exists()){
+                        flag = true;
+                        Log.d(TAG, "Item Exists! ");
+                    }
+
+                }
+            }
+
+        });
+        return flag;
+
+    }
+
+
+
+    }
+
+
+
+
+
+
+
+
+

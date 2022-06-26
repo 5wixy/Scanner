@@ -33,19 +33,13 @@
 
         />
 
-    <Button
-        android:id="@+id/btnDb"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Button"
-        android:layout_below="@id/btnScan"
-        android:layout_centerHorizontal="true"/>
+
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/btnDb"
+        android:layout_below="@+id/btnScan"
         android:layout_centerHorizontal="true"
-        android:text="View"
+        android:text="List"
         android:id="@+id/btnView">
 
     </Button>

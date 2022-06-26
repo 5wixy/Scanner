@@ -23,17 +23,6 @@
         app:layout_constraintTop_toTopOf="parent"
         />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/btnMenu"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="4dp"
-        android:layout_marginBottom="16dp"
-        android:clickable="true"
-        android:focusable="true"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/idRVItems"
-        app:srcCompat="@drawable/ic_more" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

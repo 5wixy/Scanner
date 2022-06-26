@@ -1,53 +1,39 @@
 package com.example.scannerapp;
 
+import java.math.BigInteger;
+
 public class ItemModal {
-
-    // variables for our itemname,
-    // price,code and id.
-    public String itemName;
-    public String itemPrice;
-    public String itemCode;
-    private int id;
-    public ItemModal(){}
-
-    // creating getter and setter methods
-    public String getitemName() {
-        return itemName;
+    public String code;
+    public String name;
+    public String price;
+public ItemModal() {}
+    public ItemModal(String code, String name, String price) {
+        this.code = code;
+        this.name = name;
+        this.price = price;
     }
 
-    public void setitemName(String itemName) {
-        this.itemName = itemName;
+    public String getCode() {
+        return code;
     }
 
-    public String getItemPrice() {
-        return itemPrice;
+    public void setCode(String code) {
+        this.code = code;
     }
 
-    public void setItemPrice(String itemPrice) {
-        this.itemPrice = itemPrice;
+    public String getName() {
+        return name;
     }
 
-    public String getItemCode() {
-        return itemCode;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public void setItemCode(String itemCode) {
-        this.itemCode = itemCode;
+    public String getPrice() {
+        return price;
     }
 
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    // constructor
-    public ItemModal(String itemName, String itemPrice, String itemCode) {
-        this.itemName = itemName;
-        this.itemPrice = itemPrice;
-        this.itemCode = itemCode;
+    public void setPrice(String price) {
+        this.price = price;
     }
 }

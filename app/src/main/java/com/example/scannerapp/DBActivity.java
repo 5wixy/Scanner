@@ -40,7 +40,7 @@ public class DBActivity extends AppCompatActivity{
         itemPrice = etPrice.getText().toString();
         // creating a new dbhandler class
         // and passing our context to it.
-
+        FirebaseHandler firebaseHandler = new FirebaseHandler();
         intent = getIntent();
         rCode = intent.getStringExtra("variable");
         tvCode.setText(rCode);
@@ -59,8 +59,13 @@ public class DBActivity extends AppCompatActivity{
                     Toast.makeText(DBActivity.this, "Please enter all the data..", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                //TODO IF CODE EXISTS RETRUN THIS ITEM EXISTS
+                if(firebaseHandler.isExist(rCode))
+                {
+                    Toast.makeText(getBaseContext(),"Exists",Toast.LENGTH_LONG).show();
+                }
 
+                //TODO IF CODE EXISTS RETRUN THIS ITEM EXISTS
+                firebaseHandler.addItem(new ItemModal(rCode,itemName,itemPrice));
 
                 // on below line we are calling a method to add new
                 // course to sqlite data and pass all our values to it.
